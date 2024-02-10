@@ -41,11 +41,14 @@ def _copy_files(source_folder: str, destination_folder: str):
     for root, dirs, files in os.walk(source_folder):
         for file_name in files:
             file_path = os.path.join(root, file_name)
+            print("Processing file: ", file_path)
             if not _is_legal_extensions(file_path):
+                print("Not legal extension. Skipping...")
                 continue
             if _file_exists_in_paperless(file_path, cursor):
+                print("Already in paperless. Skipping...")
                 continue
-            print("Found supported file: ", file_path)
+            print("Supported new fiel. Processing...")
             _add_file(file_name, file_path, destination_folder, cursor)
             conn.commit()
 
@@ -53,8 +56,10 @@ def _copy_files(source_folder: str, destination_folder: str):
 
 
 if __name__ == "__main__":
-    src = os.getenv("PAPERLESS_SOURCE_FOLDER", "/home/OneDrive/Private")
-    dst = os.getenv("PAPERLESS_CONSUME_FOLDER", "/docker/paperlessngx/consume")
+    src = os.getenv("PAPERLESS_SOURCE_FOLDER", "/volume1/homes/teraku/OneDrive/Private")
+    dst = os.getenv("PAPERLESS_CONSUME_FOLDER", "/volume1/docker/paperlessngx/consume")
+    print("Source Folder", src)
+    print("Destination Folder", dst)
 
     if not os.path.isfile(DB_NAME):
         print(f"DB {DB_NAME} does not exist, creating")
